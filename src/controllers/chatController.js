@@ -7,7 +7,7 @@
 const { askAI } = require('../services/aiService');
 const { sendMessage } = require('../services/whatsappService');
 const { buildContext } = require('../services/backendService');
-const { isWhitelisted } = require('../middleware/whitelist');
+const { isAllowed } = require('../middleware/whitelist');
 const { saveConversation, getOrCreateClient } = require('../services/databaseService');
 
 /**
@@ -23,9 +23,9 @@ const handleIncomingMessage = async (messageData) => {
         return;
     }
 
-    // Verificar whitelist — si el número está en la lista, NO responder
-    if (isWhitelisted(from)) {
-        console.log(`🚫 Mensaje de ${from} ignorado (whitelist)`);
+    // Verificar whitelist — solo responder a números permitidos
+    if (!isAllowed(from)) {
+        console.log(`🚫 Mensaje de ${from} ignorado (no está en la whitelist)`);
         return;
     }
 
